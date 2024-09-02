@@ -1,143 +1,154 @@
 blueprint:
-  name: Zooz ZEN71
-  description: Automations helper for the Zooz ZEN71 Switch using the Zwave JS integration.
+  name: Z-Wave Plus 700/800 Series S2 ZEN 71/72/76/77 Switches
+  description: Create automations for the Z-Wave Plus 700/800 Series S2 Switches Zen71/Zen72/Zen76/Zen77
   domain: automation
   input:
-    zooz_zen71:
-      name: Zooz ZEN71
-      description: The ZEN71 switch to interact with.
+    zooz-switch:
+      name: Zen71/72/76/77 Switch/Dimmer
+      description: List of applicable Zen switches/dimmers.
       selector:
         device:
-          integration: zwave_js
-          manufacturer: Zooz
+          multiple: true
           filter:
-            - model: ZEN71
-            - model: ZEN71 800LR
-    switch_up_1x:
-      name: Top Paddle 1x
-      description:
-        "Action to run on switch upper paddle single tap. Default: Turn
-        on switch."
+            - integration: zwave_js
+              manufacturer: Zooz
+              model: ZEN77
+            - integration: zwave_js
+              manufacturer: Zooz
+              model: ZEN76
+            - integration: zwave_js
+              manufacturer: Zooz
+              model: ZEN77 800LR
+            - integration: zwave_js
+              manufacturer: Zooz
+              model: ZEN76 800LR
+            - integration: zwave_js
+              manufacturer: Zooz
+              model: ZEN71 800LR
+            - integration: zwave_js
+              manufacturer: Zooz
+              model: ZEN72 800LR
+            - integration: zwave_js
+              manufacturer: Zooz
+              model: ZEN71
+            - integration: zwave_js
+              manufacturer: Zooz
+              model: ZEN72
+    button_a:
+      name: Button A - Up/On press 1x
+      description: Action to run, when the button is pressed one time.
       default: []
       selector:
         action: {}
-    switch_up_2x:
-      name: Top Paddle 2x
-      description: Action to run on switch upper paddle double tap.
+    button_a2:
+      name: Button A - Up/On press 2x
+      description: Action to run, when the button is pressed two times.
       default: []
       selector:
         action: {}
-    switch_up_3x:
-      name: Top Paddle 3x
-      description:
-        "Action to run on switch upper paddle triple tap. Default: Enter
-        inclusion/pairing mode."
+    button_a3:
+      name: Button A - Up/On press 3x
+      description: Action to run, when the button is pressed two times.
       default: []
       selector:
         action: {}
-    switch_up_4x:
-      name: Top Paddle 4x
-      description: Action to run on switch upper paddle quadruple tap.
+    button_a4:
+      name: Button A - Up/On press 4x
+      description: Action to run, when the button is pressed four times.
       default: []
       selector:
         action: {}
-    switch_up_5x:
-      name: Top Paddle 5x
-      description: Action to run on switch upper paddle quintuple tap.
+    button_a5:
+      name: Button A - Up/On press 5x
+      description: Action to run, when the button is pressed five times.
       default: []
       selector:
         action: {}
-    switch_up_hold:
-      name: Top Paddle Hold
-      description: "Action to run on switch upper paddle press-and-hold."
+    button_a_held:
+      name: Button A - Up/On held down
+      description: Action to run, when the button is held down.
       default: []
       selector:
         action: {}
-    switch_up_release:
-      name: Top Paddle Release
-      description: Action to run on switch upper paddle release.
+    button_b:
+      name: Button B - Down/Off press 1x
+      description: Action to run, when the button is pressed one time.
       default: []
       selector:
         action: {}
-    switch_down_1x:
-      name: Lower Paddle 1x
-      description:
-        "Action to run on switch lower paddle single tap. Default: Turn
-        off switch."
+    button_b2:
+      name: Button B - Down/Off press 2x
+      description: Action to run, when the button is pressed two times.
       default: []
       selector:
         action: {}
-    switch_down_2x:
-      name: Lower Paddle 2x
-      description: Action to run on switch lower paddle double tap.
+    button_b3:
+      name: Button B - Down/Off press 3x
+      description: Action to run, when the button is pressed two times.
       default: []
       selector:
         action: {}
-    switch_down_3x:
-      name: Lower Paddle 3x
-      description:
-        "Action to run on switch lower paddle triple tap. Default: Enter
-        exclusion/un-pairing mode."
+    button_b4:
+      name: Button B - Down/Off press 4x
+      description: Action to run, when the button is pressed four times.
       default: []
       selector:
         action: {}
-    switch_down_4x:
-      name: Lower Paddle 4x
-      description: Action to run on switch lower paddle quadruple tap.
+    button_b5:
+      name: Button B - Down/Off press 5x
+      description: Action to run, when the button is pressed five times.
       default: []
       selector:
         action: {}
-    switch_down_5x:
-      name: Lower Paddle 5x
-      description: Action to run on switch lower paddle quintuple tap.
+    button_b_held:
+      name: Button B - Down/Off held down
+      description: Action to run, when the button is held down.
       default: []
       selector:
         action: {}
-    switch_down_hold:
-      name: Bottom Paddle Hold
-      description: "Action to run on switch lower paddle press-and-hold."
-      default: []
-      selector:
-        action: {}
-    switch_down_release:
-      name: Bottom Paddle Release
-      description: Action to run on switch lower paddle double tap.
-      default: []
-      selector:
-        action: {}
-  source_url: https://community.home-assistant.io/t/zooz-zen30-double-switch-automation-helper/281362
+  source_url: https://community.home-assistant.io/t/z-wave-plus-700-800-series-s2-zen-71-72-76-77-switches/414382
 mode: single
 max_exceeded: silent
+variables:
+  device_id: !input 'zooz-switch'
 trigger:
-  - platform: event
-    event_type: zwave_js_value_notification
-    event_data:
-      command_class_name: Central Scene
-      device_id: !input "zooz_zen71"
+- platform: event
+  event_type: zwave_js_value_notification
+condition: '{{ trigger.event.data.device_id in device_id }}'
 action:
-  - variables:
-      scene_id: "{{ trigger.event.data.label }}"
-      attribute_id: "{{ trigger.event.data.value }}"
-  - choose:
-      - conditions: "{{ scene_id == 'Scene 001' }}"
-        sequence:
-          - choose:
-              - conditions: "{{ attribute_id == 'KeyPressed' }}"
-                sequence: !input "switch_up_1x"
-              - conditions: "{{ attribute_id == 'KeyPressed2x' }}"
-                sequence: !input "switch_up_2x"
-              - conditions: "{{ attribute_id == 'KeyPressed4x' }}"
-                sequence: !input "switch_up_4x"
-              - conditions: "{{ attribute_id == 'KeyPressed5x' }}"
-                sequence: !input "switch_up_5x"
-      - conditions: "{{ scene_id == 'Scene 002' }}"
-        sequence:
-          - choose:
-              - conditions: "{{ attribute_id == 'KeyPressed' }}"
-                sequence: !input "switch_down_1x"
-              - conditions: "{{ attribute_id == 'KeyPressed2x' }}"
-                sequence: !input "switch_down_2x"
-              - conditions: "{{ attribute_id == 'KeyPressed4x' }}"
-                sequence: !input "switch_down_4x"
-              - conditions: "{{ attribute_id == 'KeyPressed5x' }}"
-                sequence: !input "switch_down_5x"
+- variables:
+    button_id: '{{ trigger.event.data.property_key_name }}'
+    press_count: '{{ trigger.event.data.value }}'
+- service: logbook.log
+  data:
+    name: Button Id
+    message: '{{ button_id }}'
+- service: logbook.log
+  data:
+    name: Press Count
+    message: '{{ press_count }}'
+- choose:
+  - conditions: '{{ button_id == "001" and press_count == "KeyPressed" }}'
+    sequence: !input 'button_a'
+  - conditions: '{{ button_id == "001" and press_count == "KeyPressed2x" }}'
+    sequence: !input 'button_a2'
+  - conditions: '{{ button_id == "001" and press_count == "KeyPressed3x" }}'
+    sequence: !input 'button_a3'
+  - conditions: '{{ button_id == "001" and press_count == "KeyPressed4x" }}'
+    sequence: !input 'button_a4'
+  - conditions: '{{ button_id == "001" and press_count == "KeyPressed5x" }}'
+    sequence: !input 'button_a5'
+  - conditions: '{{ button_id == "001" and press_count == "KeyHeldDown" }}'
+    sequence: !input 'button_a_held'
+  - conditions: '{{ button_id == "002" and press_count == "KeyPressed" }}'
+    sequence: !input 'button_b'
+  - conditions: '{{ button_id == "002" and press_count == "KeyPressed2x" }}'
+    sequence: !input 'button_b2'
+  - conditions: '{{ button_id == "002" and press_count == "KeyPressed3x" }}'
+    sequence: !input 'button_b3'
+  - conditions: '{{ button_id == "002" and press_count == "KeyPressed4x" }}'
+    sequence: !input 'button_b4'
+  - conditions: '{{ button_id == "002" and press_count == "KeyPressed5x" }}'
+    sequence: !input 'button_b5'
+  - conditions: '{{ button_id == "002" and press_count == "KeyHeldDown" }}'
+    sequence: !input 'button_b_held'
